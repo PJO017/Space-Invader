@@ -1,9 +1,23 @@
-import pygame
+import pygame, sys
+import scrn
+import input_handler
+import player
+import enemies
 
-pygame.init()
+from pygame import*
+from player import Player
 
-screen_width = 600
-screen_height = 400
+def main():
 
-pygame.display.set_mode((screen_width, screen_height))
+    pygame.init()
 
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT: sys.exit()
+
+
+        scrn.screen.fill(scrn.colors['black'])
+        pygame.display.flip()
+
+if __name__ == '__main__':
+    main()
