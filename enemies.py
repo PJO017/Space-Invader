@@ -1,4 +1,4 @@
-import pygame, pygame._sprite
+import pygame, pygame._sprite, random
 import scrn
 import input_handler as input_handler
 
@@ -27,6 +27,8 @@ class Enemy(pygame.sprite.Sprite):
 
         self.x = x
         self.y = y
+
+        self.shot = False
 
         self.killed = False
 
@@ -65,8 +67,49 @@ def create_enemies():
             enemy2 = Enemy('Sprites/enemy2_1.jpg', 'Sprites/enemy2_2.jpg', w_spacing * i, second_row)
 
             all_enemies.add(enemy, enemy2)
+
     
 def destroy_enemy(enemy):
     enemy.image = pygame.image.load('Sprites/enemy_shot.jpg').convert_alpha(scrn.screen)
     enemy.killed = True
+
+class Enemy_Laser(pygame.sprite.Sprite):
+    def __init__(self, enemy):
+        pygame.sprite.Sprite.__init__(self)
+
+        self.image = pygame.image.load('Sprites/enemy_laser.jpg').convert_alpha(scrn.screen)
+        self.enemy = enemy
+
+        self.rect = self.image.get_rect()
+        self.rect.center = self.enemy.rect.center
+        self.rect.x, self.rect.y = (self.enemy.rect.x, self.enemy.rect.y)
+
+        self.fired = False
+        self.enemy_killed = False
+
+
+
+    def update(self):
+        if self.enemy_killed == False:
+            self.dy = 0
+
+            if self.rect.y < scrn.height and self.fired:
+                self.rect.y += 30
+            else:
+                self.rect.x, self.rect.y = (self.enemy.rect.x, self.enemy.rect.y)
+                self.fired = False
+        else:
+            self.kill()
+
+    
+    def destroy_enemy_laser(self):
+        self.enemy_killed = True
+
+all_enemy_lasers = pygame.sprite.Group()
+
+def create_enemies_lasers():
+    for i in range(len(all_enemies.sprites())):
+        enemy_laser = Enemy_Laser(all_enemies.sprites()[i])
+
+        all_enemy_lasers.add(enemy_laser)
 

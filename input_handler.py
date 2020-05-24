@@ -9,3 +9,5 @@ def get_inputs():
         return 'right'
     if keys[pygame.K_SPACE]:
         return 'space'
+    if keys[pygame.K_ESCAPE]:
+        sys.exit()

@@ -40,21 +40,21 @@ class Player_Laser(pygame.sprite.Sprite):
         self.player = player
         self.rect.center = (scrn.width / 2, scrn.height / 2)
         self.rect.x, self.rect.y = (self.player.rect.x, self.player.rect.y)
-        self.shot = False
+        self.fired = False
 
 
     def update(self):
         self.dy = 0
 
-        if self.rect.y > 0 and self.shot:
-            self.rect.y -= 20
+        if self.rect.y > 0 and self.fired:
+            self.rect.y -= 30
         else:
             self.rect.x, self.rect.y = (self.player.rect.x, self.player.rect.y)
-            self.shot = False
+            self.fired = False
         
-        if input_handler.get_inputs() == 'space' and not self.shot:
+        if input_handler.get_inputs() == 'space' and not self.fired:
             self.rect.x, self.rect.y = (self.player.rect.x, self.player.rect.y)
-            self.shot = True
+            self.fired = True
 
       
             
