@@ -1,7 +1,8 @@
 import pygame, pygame._sprite
 import scrn
 import input_handler as input_handler
-
+import enemies
+from enemies import*
 
 colors = {
     'black': (0, 0, 0),
@@ -31,6 +32,31 @@ class Player(pygame.sprite.Sprite):
 
         self.rect.x += self.dx
 
+class Player_Laser(pygame.sprite.Sprite):
+    def __init__(self, player):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load('Sprites/player_laser.png').convert_alpha(scrn.screen)
+        self.rect = self.image.get_rect()
+        self.player = player
+        self.rect.center = (scrn.width / 2, scrn.height / 2)
+        self.rect.x, self.rect.y = (self.player.rect.x, self.player.rect.y)
+        self.shot = False
 
+
+    def update(self):
+        self.dy = 0
+
+        if self.rect.y > 0 and self.shot:
+            self.rect.y -= 20
+        else:
+            self.rect.x, self.rect.y = (self.player.rect.x, self.player.rect.y)
+            self.shot = False
+        
+        if input_handler.get_inputs() == 'space' and not self.shot:
+            self.rect.x, self.rect.y = (self.player.rect.x, self.player.rect.y)
+            self.shot = True
+
+      
+            
 
 
