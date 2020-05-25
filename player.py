@@ -19,6 +19,7 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = (scrn.width / 2, scrn.height / 2)
         self.rect.bottom = scrn.height
+        self.lives = 3
 
 
     def update(self):
@@ -31,6 +32,10 @@ class Player(pygame.sprite.Sprite):
             self.dx = self.speed
 
         self.rect.x += self.dx
+
+
+    def lose_life(self):
+        self.kill()
 
 class Player_Laser(pygame.sprite.Sprite):
     def __init__(self, player):
