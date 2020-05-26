@@ -18,7 +18,7 @@ class Player(pygame.sprite.Sprite):
         self.image = pygame.image.load('Sprites/player_ship.jpg').convert_alpha(scrn.screen)
         self.rect = self.image.get_rect()
         self.rect.center = (scrn.width / 2, scrn.height / 2)
-        self.rect.bottom = scrn.height
+        self.rect.bottom = scrn.height -20
         self.lives = 3
 
 

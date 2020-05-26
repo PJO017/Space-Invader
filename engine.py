@@ -47,26 +47,44 @@ def main():
 
 
     clock = pygame.time.Clock()
-    fps = 45
+    fps = 30
 
-    def fire(fire_rate):
-        for i in range(fire_rate):
+    def fire():
+        for i in range(len(enemy_lasers_group.sprites())):
             if len(enemies_group.sprites()) > 0:
                 random_enemy = random.randint(0, len(enemies_group.sprites())-1)
+                enemy_lasers_group.sprites()[i].enemy = enemies_group.sprites()[random_enemy]
                 if player.rect.x <= enemies_group.sprites()[random_enemy].rect.x + 5 and player.rect.x >= enemies_group.sprites()[random_enemy].rect.x - 5:
-                    enemy_lasers_group.sprites()[random_enemy].fired = True
+                    enemy_lasers_group.sprites()[i].fired = True
+
+
+
+    CHANGE_SPRITE_EVENT = pygame.USEREVENT + 1
+    animation_speed = 1000
+    animation_timer = pygame.time.set_timer(CHANGE_SPRITE_EVENT, animation_speed)
+
 
     while 1:
         all_sprites.update()
-        fire(1)
+        fire()
+
+        for event in pygame.event.get():
+            if event.type == CHANGE_SPRITE_EVENT:
+                for sprite in enemies_group.sprites():
+                    sprite.change_sprite()
+            if event.type == pygame.QUIT: sys.exit()
 
         enemy_hit = pygame.sprite.spritecollideany(player_laser, enemies_group)
-        pygame.sprite.groupcollide(enemy_lasers_group, block_group, False, True) 
+        for lasers in pygame.sprite.groupcollide(enemy_lasers_group, block_group, False, True).keys():
+            lasers.fired = False
+            if animation_speed > 500:
+                animation_timer = pygame.time.set_timer(CHANGE_SPRITE_EVENT, animation_speed - 50)
+                animation_speed -= 50
 
         if enemy_hit:
             player_laser.fired = False
             enemies.destroy_enemy(enemy_hit)
-            enemy_lasers_group.sprites()[enemies_group.sprites().index(enemy_hit)].destroy_enemy_laser()
+            
 
         player_hit = pygame.sprite.spritecollideany(player, enemy_lasers_group, False)
 
@@ -83,9 +101,7 @@ def main():
         scrn.screen.fill(scrn.colors['black'])
         all_sprites.draw(scrn.screen)
         pygame.display.flip()
-
-        for event in pygame.event.get():
-             if event.type == pygame.QUIT: sys.exit()
+             
 
         clock.tick(fps)
 

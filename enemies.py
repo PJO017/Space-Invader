@@ -12,11 +12,15 @@ colors = {
     'green': (0, 255, 0)
 }
 
+all_enemies = pygame.sprite.Group()
+
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, type, type2, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.type = type
         self.type2 = type2
+        self.image1 = True
+        self.image2 = False
 
         self.image = pygame.image.load(self.type).convert_alpha(scrn.screen)
 
@@ -34,27 +38,39 @@ class Enemy(pygame.sprite.Sprite):
 
 
     def update(self):
+        if len(all_enemies.sprites()) < 5:
+                for enemy in (all_enemies.sprites()):
+                    enemy.speed = 5
+
         if self.killed == False:
             self.dx = self.speed
 
             self.rect.x += self.dx
 
+
             if self.rect.right > self.x + self.rect.width + 110:
                 self.speed *= -1
-                self.image = pygame.image.load(self.type2).convert_alpha(scrn.screen)
-                #self.rect.y += 20
 
 
             elif self.rect.left < self.x - self.rect.width:
                 self.speed *= -1
                 self.rect.y += 20
-                self.image = pygame.image.load(self.type).convert_alpha(scrn.screen)
+
         else:
             self.kill()
 
-        
 
-all_enemies = pygame.sprite.Group()
+
+    def change_sprite(self):
+        if self.image1:
+            self.image = pygame.image.load(self.type2).convert_alpha(scrn.screen)
+            self.image1 = False
+            self.image2 = True
+        else:
+            self.image = pygame.image.load(self.type).convert_alpha(scrn.screen)
+            self.image1 = True
+            self.image2 = False
+
 
 def create_enemies():
     w_spacing = 50
@@ -64,9 +80,11 @@ def create_enemies():
     for i in range(12):
         if i > 0:
             enemy = Enemy('Sprites/enemy1_1.jpg', 'Sprites/enemy1_2.jpg', w_spacing * i, h_spacing)
+            
             enemy2 = Enemy('Sprites/enemy2_1.jpg', 'Sprites/enemy2_2.jpg', w_spacing * i, h_spacing + 50)
             enemy3 = Enemy('Sprites/enemy1_1.jpg', 'Sprites/enemy1_2.jpg', w_spacing * i, h_spacing + 100)
             enemy4 = Enemy('Sprites/enemy2_1.jpg', 'Sprites/enemy2_2.jpg', w_spacing * i, h_spacing + 150)
+            
 
             all_enemies.add(enemy, enemy2, enemy3, enemy4)
 
@@ -105,12 +123,12 @@ class Enemy_Laser(pygame.sprite.Sprite):
 
     
     def destroy_enemy_laser(self):
-        self.enemy_killed = True
+        self.enemy = all_enemies.sprites()[random.randrange(0, len(all_enemies.sprites()))]
 
 all_enemy_lasers = pygame.sprite.Group()
 
 def create_enemies_lasers():
-    for i in range(len(all_enemies.sprites())):
+    for i in range(3):
         enemy_laser = Enemy_Laser(all_enemies.sprites()[i])
 
         all_enemy_lasers.add(enemy_laser)
