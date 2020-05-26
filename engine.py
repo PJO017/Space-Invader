@@ -29,9 +29,10 @@ def main():
     player = Player()
     player_laser = Player_Laser(player)
 
-    block.make_structure(50)
-    block.make_structure(290)
-    block.make_structure(scrn.width - 160)
+    block.make_structure(80)
+    block.make_structure(270)
+    block.make_structure(440)
+    block.make_structure(scrn.width - 180)
 
     # Adding the player and enemies to the all sprites group
     all_sprites.add(player, player_laser)
@@ -54,7 +55,7 @@ def main():
             if len(enemies_group.sprites()) > 0:
                 random_enemy = random.randint(0, len(enemies_group.sprites())-1)
                 enemy_lasers_group.sprites()[i].enemy = enemies_group.sprites()[random_enemy]
-                if player.rect.x <= enemies_group.sprites()[random_enemy].rect.x + 5 and player.rect.x >= enemies_group.sprites()[random_enemy].rect.x - 5:
+                if player.rect.x <= enemies_group.sprites()[random_enemy].rect.x + 10 and player.rect.x >= enemies_group.sprites()[random_enemy].rect.x - 10:
                     enemy_lasers_group.sprites()[i].fired = True
 
 
@@ -89,8 +90,15 @@ def main():
         player_hit = pygame.sprite.spritecollideany(player, enemy_lasers_group, False)
 
         if player_hit:
+            # Enemy laser that hit player
+            print(player_hit)
+            player_hit.self_fired = False
+
+
             player.lose_life()
-            player_laser.kill()
+    
+
+            
 
         player_hit_block = pygame.sprite.spritecollide(player_laser, block_group, True)
 

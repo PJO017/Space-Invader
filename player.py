@@ -16,9 +16,12 @@ class Player(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load('Sprites/player_ship.jpg').convert_alpha(scrn.screen)
+
+        self.spawn_point = (0, scrn.height-60)
+
         self.rect = self.image.get_rect()
-        self.rect.center = (scrn.width / 2, scrn.height / 2)
-        self.rect.bottom = scrn.height -20
+        self.rect.bottom = scrn.height - 60
+
         self.lives = 3
 
 
@@ -35,16 +38,30 @@ class Player(pygame.sprite.Sprite):
 
 
     def lose_life(self):
-        self.kill()
+
+        if self.lives <= 1:
+            # Respawn
+            self.rect.x, self.rect.bottom = self.spawn_point
+            
+            self.lives -= 1
+            print('Lives: ' + str(self.lives))
+
+            
+
+        else:
+            print('Game Over')
+            self.kill()
+        
 
 class Player_Laser(pygame.sprite.Sprite):
     def __init__(self, player):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load('Sprites/player_laser.png').convert_alpha(scrn.screen)
+        self.image = pygame.Surface((5, 14))
+        self.image.fill(colors['green'])
         self.rect = self.image.get_rect()
         self.player = player
         self.rect.center = (scrn.width / 2, scrn.height / 2)
-        self.rect.x, self.rect.y = (self.player.rect.x, self.player.rect.y)
+        self.rect.x, self.rect.y = (self.player.rect.x + 12, self.player.rect.y + 5)
         self.fired = False
 
 
@@ -52,13 +69,18 @@ class Player_Laser(pygame.sprite.Sprite):
         self.dy = 0
 
         if self.rect.y > 0 and self.fired:
-            self.rect.y -= 30
+            if self.rect.y < 580:
+                self.image.fill(colors['white'])
+            else:
+                self.image.fill(colors['green'])
+            self.rect.y -= 25
         else:
-            self.rect.x, self.rect.y = (self.player.rect.x, self.player.rect.y)
+            self.rect.x, self.rect.y = (self.player.rect.x + 12, self.player.rect.y + 5)
+            self.image.fill(colors['green'])
             self.fired = False
         
         if input_handler.get_inputs() == 'space' and not self.fired:
-            self.rect.x, self.rect.y = (self.player.rect.x, self.player.rect.y)
+            self.rect.x, self.rect.y = (self.player.rect.x + 12, self.player.rect.y + 5)
             self.fired = True
 
       

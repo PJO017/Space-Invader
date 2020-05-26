@@ -13,6 +13,7 @@ colors = {
 }
 
 all_enemies = pygame.sprite.Group()
+rows = {'row_1': [], 'row_2': [], 'row_3': [], 'row_4': [], 'row_5': []}
 
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, type, type2, x, y):
@@ -36,27 +37,49 @@ class Enemy(pygame.sprite.Sprite):
 
         self.killed = False
 
+    def move(self):
+        if self.moving_left == True:
+            self.rect.x -= 20
+        elif self.moving_right == True:
+            self.rect.x += 20
+
+    
+
 
     def update(self):
-        if len(all_enemies.sprites()) < 5:
-                for enemy in (all_enemies.sprites()):
-                    enemy.speed = 5
-
         if self.killed == False:
             self.dx = self.speed
-
             self.rect.x += self.dx
 
 
-            if self.rect.right > self.x + self.rect.width + 110:
+            longest_row = None
+            longest_row_value = 0
+            
+            for key in rows.keys():
+                if len(rows[key]) > longest_row_value:
+                    longest_row = key
+                    longest_row_value = len(rows[key])
+
+            if rows[longest_row][-1].rect.right > scrn.width-5:
                 self.speed *= -1
-
-
-            elif self.rect.left < self.x - self.rect.width:
+            
+            if rows[longest_row][0].rect.left < 5:
                 self.speed *= -1
                 self.rect.y += 20
+    
 
         else:
+            if self in rows['row_1']:
+                rows['row_1'].remove(self)
+            elif self in rows['row_2']:
+                rows['row_2'].remove(self)
+            elif self in rows['row_3']:
+                rows['row_3'].remove(self)
+            elif self in rows['row_4']:
+                rows['row_4'].remove(self)
+            elif self in rows['row_5']:
+                rows['row_5'].remove(self)
+            
             self.kill()
 
 
@@ -74,19 +97,24 @@ class Enemy(pygame.sprite.Sprite):
 
 def create_enemies():
     w_spacing = 50
-    h_spacing = 100
+    v_spacing = 100
 
 
     for i in range(12):
         if i > 0:
-            enemy = Enemy('Sprites/enemy1_1.jpg', 'Sprites/enemy1_2.jpg', w_spacing * i, h_spacing)
-            
-            enemy2 = Enemy('Sprites/enemy2_1.jpg', 'Sprites/enemy2_2.jpg', w_spacing * i, h_spacing + 50)
-            enemy3 = Enemy('Sprites/enemy1_1.jpg', 'Sprites/enemy1_2.jpg', w_spacing * i, h_spacing + 100)
-            enemy4 = Enemy('Sprites/enemy2_1.jpg', 'Sprites/enemy2_2.jpg', w_spacing * i, h_spacing + 150)
+            enemy = Enemy('Sprites/enemy1_1.jpg', 'Sprites/enemy1_2.jpg', w_spacing * i, v_spacing)
+            rows['row_1'].append(enemy)
+            enemy2 = Enemy('Sprites/enemy2_1.jpg', 'Sprites/enemy2_2.jpg', w_spacing * i, v_spacing + 50)
+            rows['row_2'].append(enemy2)
+            enemy3 = Enemy('Sprites/enemy3_1.jpg', 'Sprites/enemy3_2.jpg', w_spacing * i, v_spacing + 100)
+            rows['row_3'].append(enemy3)
+            enemy4 = Enemy('Sprites/enemy1_1.jpg', 'Sprites/enemy1_2.jpg', w_spacing * i, v_spacing + 150)
+            rows['row_4'].append(enemy4)
+            enemy5 = Enemy('Sprites/enemy2_1.jpg', 'Sprites/enemy2_2.jpg', w_spacing * i, v_spacing + 200)
+            rows['row_5'].append(enemy5)
             
 
-            all_enemies.add(enemy, enemy2, enemy3, enemy4)
+            all_enemies.add(enemy, enemy2, enemy3, enemy4, enemy5)
 
     
 def destroy_enemy(enemy):
@@ -98,7 +126,7 @@ class Enemy_Laser(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
 
         self.image = pygame.Surface((5, 14))
-        self.image.fill(colors['red'])
+        self.image.fill(colors['white'])
         self.enemy = enemy
 
         self.rect = self.image.get_rect()
@@ -114,7 +142,11 @@ class Enemy_Laser(pygame.sprite.Sprite):
             self.dy = 0
 
             if self.rect.y < scrn.height and self.fired:
-                self.rect.y += 25
+                if self.rect.y > 550:
+                    self.image.fill(colors['green'])
+                else:
+                    self.image.fill(colors['white'])
+                self.rect.y += 15
             else:
                 self.rect.x, self.rect.y = (self.enemy.rect.x+10, self.enemy.rect.y)
                 self.fired = False
@@ -128,7 +160,7 @@ class Enemy_Laser(pygame.sprite.Sprite):
 all_enemy_lasers = pygame.sprite.Group()
 
 def create_enemies_lasers():
-    for i in range(3):
+    for i in range(6):
         enemy_laser = Enemy_Laser(all_enemies.sprites()[i])
 
         all_enemy_lasers.add(enemy_laser)

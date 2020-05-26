@@ -2,7 +2,7 @@ import pygame
 
 pygame.init()
 
-screen_size = width, height = 700, 800
+screen_size = width, height = 800, 800
 
 colors = {
     'black': (0, 0, 0),
