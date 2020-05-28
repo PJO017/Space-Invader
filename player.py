@@ -27,7 +27,7 @@ class Player(pygame.sprite.Sprite):
 
     def update(self):
         self.dx = 0
-        self.speed = 10
+        self.speed = 6
 
         if input_handler.get_inputs() == 'left' and self.rect.left > 5:
             self.dx = -self.speed
@@ -42,7 +42,7 @@ class Player(pygame.sprite.Sprite):
         if self.lives <= 1:
             # Respawn
             self.rect.x, self.rect.bottom = self.spawn_point
-            
+
             self.lives -= 1
             print('Lives: ' + str(self.lives))
 

@@ -28,27 +28,87 @@ class Enemy(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
 
-        self.speed = 1
+        self.vel = 2
 
-        self.x = x
-        self.y = y
+        self.rect.x = x
+        self.rect.y = y
+
+        self.moving_right = True
+        self.moving_left = False
 
         self.shot = False
 
         self.killed = False
 
     def move(self):
-        if self.moving_left == True:
-            self.rect.x -= 20
-        elif self.moving_right == True:
-            self.rect.x += 20
+        if self.killed == False:
+
+            longest_row = None
+            longest_row_value = 0
+            
+            for key in rows.keys():
+                if len(rows[key]) > longest_row_value:
+                    longest_row = key
+                    longest_row_value = len(rows[key])
+
+            if self in rows['row_1']:
+                if rows[longest_row][-1].rect.right < scrn.width-20 and rows[longest_row][0].rect.left > 10:
+                    self.rect.x += self.vel
+                else:
+                    self.vel *= -1
+            elif self in rows['row_2']:
+                if rows[longest_row][-1].rect.right < scrn.width-20 and rows[longest_row][0].rect.left > 10:
+                    self.rect.x += self.vel
+                else:
+                    self.vel *= -1
+            elif self in rows['row_3']:
+                if rows[longest_row][-1].rect.right < scrn.width-20 and rows[longest_row][0].rect.left > 10:
+                    self.rect.x += self.vel
+                else:
+                    self.vel *= -1
+            elif self in rows['row_4']:
+                if rows[longest_row][-1].rect.right < scrn.width-20 and rows[longest_row][0].rect.left > 10:
+                    self.rect.x += self.vel
+                else:
+                    self.vel *= -1
+            elif self in rows['row_5']:
+                if rows[longest_row][-1].rect.right < scrn.width-20 and rows[longest_row][0].rect.left > 10:
+                    self.rect.x += self.vel
+                else:
+                    self.vel *= -1
+                    self.rect.x += self.vel
+
+        else:
+            if self in rows['row_1']:
+                rows['row_1'].remove(self)
+            elif self in rows['row_2']:
+                rows['row_2'].remove(self)
+            elif self in rows['row_3']:
+                rows['row_3'].remove(self)
+            elif self in rows['row_4']:
+                rows['row_4'].remove(self)
+            elif self in rows['row_5']:
+                rows['row_5'].remove(self)
+            
+            self.kill()
 
     
 
+    def change_sprite(self):
+        if self.image1:
+            self.image = pygame.image.load(self.type2).convert_alpha(scrn.screen)
+            self.image1 = False
+            self.image2 = True
+        else:
+            self.image = pygame.image.load(self.type).convert_alpha(scrn.screen)
+            self.image1 = True
+            self.image2 = False
 
     def update(self):
+        pass
+    
         if self.killed == False:
-            self.dx = self.speed
+            self.dx = self.vel
             self.rect.x += self.dx
 
 
@@ -61,10 +121,10 @@ class Enemy(pygame.sprite.Sprite):
                     longest_row_value = len(rows[key])
 
             if rows[longest_row][-1].rect.right > scrn.width-5:
-                self.speed *= -1
+                self.vel *= -1
             
             if rows[longest_row][0].rect.left < 5:
-                self.speed *= -1
+                self.vel *= -1
                 self.rect.y += 20
     
 
@@ -82,25 +142,12 @@ class Enemy(pygame.sprite.Sprite):
             
             self.kill()
 
-
-
-    def change_sprite(self):
-        if self.image1:
-            self.image = pygame.image.load(self.type2).convert_alpha(scrn.screen)
-            self.image1 = False
-            self.image2 = True
-        else:
-            self.image = pygame.image.load(self.type).convert_alpha(scrn.screen)
-            self.image1 = True
-            self.image2 = False
-
-
 def create_enemies():
     w_spacing = 50
     v_spacing = 100
 
 
-    for i in range(12):
+    for i in range(11):
         if i > 0:
             enemy = Enemy('Sprites/enemy1_1.jpg', 'Sprites/enemy1_2.jpg', w_spacing * i, v_spacing)
             rows['row_1'].append(enemy)
@@ -115,6 +162,9 @@ def create_enemies():
             
 
             all_enemies.add(enemy, enemy2, enemy3, enemy4, enemy5)
+
+    for enemy in all_enemies.sprites():
+        enemy.rect.x += 50
 
     
 def destroy_enemy(enemy):

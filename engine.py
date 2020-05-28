@@ -60,27 +60,28 @@ def main():
 
 
 
-    CHANGE_SPRITE_EVENT = pygame.USEREVENT + 1
+    MOVE_EVENT = pygame.USEREVENT + 1
+
     animation_speed = 1000
-    animation_timer = pygame.time.set_timer(CHANGE_SPRITE_EVENT, animation_speed)
+    animation_timer = pygame.time.set_timer(MOVE_EVENT, animation_speed)
 
 
     while 1:
         all_sprites.update()
+
         fire()
 
         for event in pygame.event.get():
-            if event.type == CHANGE_SPRITE_EVENT:
+            if event.type == MOVE_EVENT:
                 for sprite in enemies_group.sprites():
                     sprite.change_sprite()
+
             if event.type == pygame.QUIT: sys.exit()
 
         enemy_hit = pygame.sprite.spritecollideany(player_laser, enemies_group)
         for lasers in pygame.sprite.groupcollide(enemy_lasers_group, block_group, False, True).keys():
             lasers.fired = False
-            if animation_speed > 500:
-                animation_timer = pygame.time.set_timer(CHANGE_SPRITE_EVENT, animation_speed - 50)
-                animation_speed -= 50
+            
 
         if enemy_hit:
             player_laser.fired = False
@@ -98,12 +99,11 @@ def main():
             player.lose_life()
     
 
-            
-
         player_hit_block = pygame.sprite.spritecollide(player_laser, block_group, True)
 
         if player_hit_block:
             player_laser.fired = False
+
 
     
         scrn.screen.fill(scrn.colors['black'])
